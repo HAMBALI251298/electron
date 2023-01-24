@@ -1592,17 +1592,17 @@ views::View* NativeWindowViews::GetContentsView() {
 bool NativeWindowViews::ShouldDescendIntoChildForEventHandling(
     gfx::NativeView child,
     const gfx::Point& location) {
-  // App window should claim mouse events that fall within any BrowserViews'
-  // draggable region.
-  if (NonClientHitTest(location) != HTNOWHERE)
-    return false;
-
-  // And the events on border for dragging resizable frameless window.
+  // Account for events on border for dragging resizable frameless window.
   if ((!has_frame() || has_client_frame()) && resizable_) {
     auto* frame =
         static_cast<FramelessView*>(widget()->non_client_view()->frame_view());
     return frame->ResizingBorderHitTest(location) == HTNOWHERE;
   }
+
+  // App window should claim mouse events that fall within any BrowserViews'
+  // draggable region.
+  if (NonClientHitTest(location) != HTNOWHERE)
+    return false;
 
   return true;
 }
